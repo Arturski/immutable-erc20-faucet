@@ -6,7 +6,7 @@ async function main() {
   console.log("Deploying contracts with the account:", deployer.address);
 
   // Address of the ERC20 token (reward token)
-  const ERC20Token: string = "0x1303F139FEac224ff877e6071C782A41C30F3255";
+  const RewardTokenAddress: string = "0x1303F139FEac224ff877e6071C782A41C30F3255";
 
   // 1 Token in the smallest unit (assuming 18 decimals, same as wei)
   const claimAmount = ethers.utils.parseUnits("1", 18);
@@ -17,7 +17,7 @@ async function main() {
   // Get the contract factory and deploy
   const ERC20Faucet = await ethers.getContractFactory("ERC20Faucet");
   const erc20Faucet = await ERC20Faucet.deploy(
-    ERC20Token, // Address of the ERC20 token
+    RewardTokenAddress, // Address of the ERC20 token
     claimAmount,        // Claim amount (1 token in smallest units)
     claimInterval       // Claim interval (1 day)
   );
@@ -27,7 +27,7 @@ async function main() {
 
   // Constructor arguments used during deployment
   const constructorArguments = [
-    ERC20Token,
+    RewardTokenAddress,
     claimAmount.toString(), // .toString() is important for verification
     claimInterval
   ];
