@@ -1,19 +1,15 @@
 {
-  "name": "@imtbl/zkevm-boilerplate",
+  "name": "immutable-erc20-faucet",
   "version": "1.0.0",
-  "description": "Boilerplate Hardhat project for EVM smart contract development in Solidity",
+  "description": "Timed ERC20 faucet contract for Immutable zkEVM (Hardhat)",
   "main": "",
   "scripts": {
     "clean": "npx hardhat clean",
     "test": "npx hardhat test",
     "compile": "npx hardhat compile",
-    "deploy:erc721:zkevm": "npx hardhat run scripts/erc721deploy.ts --network immutableZkevmTestnet",
-    "deploy:erc1155:zkevm": "npx hardhat run scripts/erc1155deploy.ts --network immutableZkevmTestnet",
-    "deploy:erc20:zkevm": "npx hardhat run scripts/erc20deploy.ts --network immutableZkevmTestnet",
-    "deploy:by-id:zkevm": "npx hardhat run scripts/by-id/deploy.ts --network immutableZkevmTestnet",
-    "deploy:sharkSale:zkevm": "npx hardhat run scripts/SharkSaledeploy.ts --network immutableZkevmTestnet"
+    "deploy:zkevm": "npx hardhat run scripts/deploy.ts --network immutableZkevmTestnet"
   },
-  "author": "Immutable",
+  "author": "Arturski",
   "license": "MIT",
   "dependencies": {
     "@imtbl/contracts": "2.2.7",

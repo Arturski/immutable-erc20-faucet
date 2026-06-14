@@ -1,51 +1,51 @@
-# zkEVM Boilerplate
+# Immutable zkEVM — Timed ERC20 Faucet
 
-This repository contains a boilerplate Hardhat project for Immutable zkEVM smart contract development in Solidity. It is intended to bootstrap the development of Immutable zkEVM-compatible smart contracts for developers of all skill levels.
+A simple, self-contained **ERC20 faucet** smart contract for [Immutable zkEVM](https://www.immutable.com/zkEVM), built with Hardhat. It dispenses a fixed amount of an ERC20 token per address, rate-limited to one claim per configurable interval — handy for funding test wallets on testnet.
 
-It contains a few examples of how to extend the Immutable Presets [`@imtbl/contracts`](https://github.com/immutable/contracts) package, as well as example test cases and a deployment script to help you get started.
+## Contract
 
-For more information and guides, please refer to our [smart contract developer documentation](https://docs.immutable.com/docs/zkEVM/deploy-contracts).
+[`contracts/FaucetTimed.sol`](contracts/FaucetTimed.sol) — `ERC20Faucet`:
 
-## How to use
+- **`claim()`** — sends `claimAmount` tokens to the caller, once per `claimInterval` seconds (per address).
+- **Owner controls** — `updateToken`, `updateClaimAmount`, `updateClaimInterval`, and `withdrawTokens`.
+- **Events** — `TokensClaimed`, `TokenUpdated`, `ClaimAmountUpdated`, `ClaimIntervalUpdated`.
 
-Fork this repository and clone it to your local machine.
-See the [Github docs](https://docs.github.com/en/github/getting-started-with-github/fork-a-repo) for a guide to forking a repository.
+Constructor: `(IERC20 token, uint256 claimAmount, uint256 claimInterval)`. Fund the deployed faucet by transferring the ERC20 token to its address.
 
-Create a file called `.env` by copying the `.env.sample` file.
+> ⚠️ Educational / testnet example. Not audited — do not use with real funds without a security review.
 
-Fill in the value for the `PRIVATE_KEY=` with your deployer wallet's private key.
+## Setup
 
-Run `yarn` to install the required dependencies.
-
-There are a few pre-defined scripts that you can run to compile, test, and deploy your contracts:
-
-```
-"scripts": {
-    "clean": "npx hardhat clean",
-    "test": "npx hardhat test",
-    "compile": "npx hardhat compile",
-    "deploy:erc721:zkevm": "npx hardhat run scripts/erc721deploy.ts --network immutableZkevmTestnet",
-    "deploy:erc1155:zkevm": "npx hardhat run scripts/erc1155deploy.ts --network immutableZkevmTestnet",
-    "deploy:erc20:zkevm": "npx hardhat run scripts/erc20deploy.ts --network immutableZkevmTestnet",
-    "deploy:by-id:zkevm": "npx hardhat run scripts/by-id/deploy.ts --network immutableZkevmTestnet"
-  },
+```bash
+yarn install
+cp .env.example .env   # then fill in PRIVATE_KEY (deployer) and, optionally, a Blockscout API key
 ```
 
-## Verifying contracts on the block explorer
+| Variable | Purpose |
+| --- | --- |
+| `PRIVATE_KEY` | Deployer wallet private key |
+| `BLOCKSCOUT_API_KEY_TESTNET` | API key for verifying on the testnet explorer (optional) |
+| `BLOCKSCOUT_API_KEY_MAINNET` | API key for verifying on the mainnet explorer (optional) |
 
-The `hardhat.config.ts` file is already pre-configured to support verifying contracts on the Immutable zkEVM Testnet and Mainnet.
+## Scripts
 
-In order to verify the source code of your contract on the Immutable Block explorers, you will need to sign up for an account on the Immutable Block Explorer (https://explorer.testnet.immutable.com) and get an API key and add it to to your `.env` under the entry `BLOCKSCOUT_API_KEY_TESTNET=` or `BLOCKSCOUT_API_KEY_MAINNET=` depending on which network you're verifying the contract contract
+```bash
+yarn compile          # compile the contract
+yarn test             # run tests
+yarn deploy:zkevm     # deploy to Immutable zkEVM Testnet (scripts/deploy.ts)
+```
 
-To verify the MyERC1155.sol contract, the command would be:
+Edit the reward-token address, claim amount, and interval at the top of [`scripts/deploy.ts`](scripts/deploy.ts) before deploying.
 
-`npx hardhat verify --contract contracts/MyERC1155.sol:MyERC1155 --network immutableZkevmTestnet 0x759A390CE23Fb422b396B51BdD57b545A440D9F2 0x394655BBeA70eB605F1a55Ab954a6Ab393a7e82a "Imaginary Immutable Iguanas" "https://example-base-uri.com/" "https://example-contract-uri.com/" 0x02Ada708Db37470F6707075Cbdc7bD295d30B25E 0x394655BBeA70eB605F1a55Ab954a6Ab393a7e82a 2000`
+## Verifying on the block explorer
 
-Let's break that command down:
+`hardhat.config.ts` is pre-configured for the Immutable zkEVM Testnet and Mainnet Blockscout explorers. Get an API key from [explorer.testnet.immutable.com](https://explorer.testnet.immutable.com), add it as `BLOCKSCOUT_API_KEY_TESTNET`, then verify with the contract address and the exact constructor args used at deploy time:
 
-- The `---contract` named argument specifies which contract needs to be verified
-- The `--network` name argument specifies which network the contract is on.
-- The first argument is the address of the contract you're verifying. 
-- All the subsequent arguments are the constructor arguments that you used when deploying the contract. 
+```bash
+npx hardhat verify --contract contracts/FaucetTimed.sol:ERC20Faucet \
+  --network immutableZkevmTestnet <FAUCET_ADDRESS> <TOKEN_ADDRESS> <CLAIM_AMOUNT> <CLAIM_INTERVAL>
+```
 
+## License
 
+[MIT](LICENSE)
